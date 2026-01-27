@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ℋ Agency 管理后台</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Noto+Sans+SC:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #fff9fb;
+            --bg-secondary: #ffffff;
+            --bg-card: #ffffff;
+            --text-primary: #1a0d1a;
+            --text-secondary: #4a2847;
+            --accent-pink: #ff6b9d;
+            --accent-rose: #ff8fb5;
+            --accent-deep: #d91e63;
+            --gradient-1: linear-gradient(135deg, #ff6b9d 0%, #ff8fb5 100%);
+            --shadow-soft: 0 8px 32px rgba(255, 107, 157, 0.2);
+            --shadow-hover: 0 12px 48px rgba(255, 107, 157, 0.3);
+        }
+
+        [data-theme="dark"] {
+            --bg-primary: #1a0d1a;
+            --bg-secondary: #2d1b2e;
+            --bg-card: #3d2a3d;
+            --text-primary: #ffd4e3;
+            --text-secondary: #ffb6c9;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            transition: all 0.4s ease;
+        }
+
+        /* Login Page */
+        .login-container {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+        }
+
+        .login-box {
+            background: var(--bg-card);
+            padding: 3rem;
+            border-radius: 30px;
+            box-shadow: var(--shadow-hover);
+            max-width: 450px;
+            width: 100%;
+        }
+
+        .login-logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 3rem;
+            font-weight: 700;
+            text-align: center;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+        }
+
+        .login-title {
+            text-align: center;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            font-size: 1.2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 1rem 1.5rem;
+            border: 2px solid var(--accent-rose);
+            border-radius: 15px;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            font-family: 'Noto Sans SC', sans-serif;
+            font-size: 1rem;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--accent-pink);
+            box-shadow: 0 0 0 4px rgba(255, 107, 157, 0.1);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 1.2rem;
+            background: var(--gradient-1);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Noto Sans SC', sans-serif;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .error-message {
+            background: #ffe5ec;
+            color: #d91e63;
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* Dashboard - similar to previous styles but simplified for file size */
+        .header {
+            background: var(--bg-secondary);
+            padding: 1.5rem 2rem;
+            box-shadow: var(--shadow-soft);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            font-weight: 700;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .tab {
+            padding: 0.7rem 2rem;
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            font-weight: 600;
+            cursor: pointer;
+            border-radius: 10px;
+            font-family: 'Noto Sans SC', sans-serif;
+        }
+
+        .tab.active {
+            background: var(--gradient-1);
+            color: white;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .card {
+            background: var(--bg-card);
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: var(--shadow-soft);
+            margin-bottom: 2rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background: var(--gradient-1);
+            color: white;
+            padding: 1rem;
+            text-align: left;
+        }
+
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--accent-rose);
+        }
+
+        .btn-small {
+            padding: 0.5rem 1rem;
+            width: auto;
+            display: inline-block;
+            margin: 0.2rem;
+        }
+
+        .default-info {
+            background: #fff3e0;
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 1.5rem;
+            border-left: 4px solid #ff6b9d;
+        }
+    </style>
+</head>
+<body data-theme="light">
+    <!-- Login Page -->
+    <div id="loginPage" class="login-container">
+        <div class="login-box">
+            <div class="login-logo">ℋ Agency</div>
+            <div class="login-title">管理后台登录</div>
+            <div class="default-info">
+                <strong>🔑 默认管理员账号：</strong><br>
+                用户名: <code>admin</code><br>
+                密码: <code>admin123</code><br>
+                <small style="color: var(--text-secondary);">首次登录后请在"管理员设置"中修改密码或添加新管理员</small>
+            </div>
+            <div id="loginError" class="error-message"></div>
+            <div>
+                <div class="form-group">
+                    <label>用户名</label>
+                    <input type="text" id="loginUsername" placeholder="请输入用户名">
+                </div>
+                <div class="form-group">
+                    <label>密码</label>
+                    <input type="password" id="loginPassword" placeholder="请输入密码">
+                </div>
+                <button class="btn" onclick="login()">登录</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dashboard -->
+    <div id="dashboard" class="hidden">
+        <div class="header">
+            <div class="logo">ℋ Agency 管理后台</div>
+            <div style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
+                <span id="currentUser"></span>
+                <button class="btn btn-small" onclick="logout()">登出</button>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="tabs">
+                <button class="tab active" onclick="switchTab('submissions')">申请表单</button>
+                <button class="tab" onclick="switchTab('leaderboard')">排行榜管理</button>
+                <button class="tab" onclick="switchTab('admins')">管理员设置</button>
+            </div>
+
+            <!-- Submissions -->
+            <div id="submissions" class="tab-content active">
+                <div class="card">
+                    <h3>申请列表</h3>
+                    <div id="submissionsTable"></div>
+                </div>
+            </div>
+
+            <!-- Leaderboard -->
+            <div id="leaderboard" class="tab-content">
+                <div class="card">
+                    <h3>添加/编辑主播</h3>
+                    <input type="hidden" id="editId">
+                    <div class="form-group">
+                        <label>主播名字（中文）*</label>
+                        <input type="text" id="streamerNameZh">
+                    </div>
+                    <div class="form-group">
+                        <label>主播名字（英文）*</label>
+                        <input type="text" id="streamerNameEn">
+                    </div>
+                    <div class="form-group">
+                        <label>本月收入 (¥)*</label>
+                        <input type="number" id="income">
+                    </div>
+                    <div class="form-group">
+                        <label>直播时长（小时）*</label>
+                        <input type="number" id="hours">
+                    </div>
+                    <div class="form-group">
+                        <label>粉丝增长*</label>
+                        <input type="number" id="fansGrowth">
+                    </div>
+                    <div class="form-group">
+                        <label>徽章（中文）*</label>
+                        <input type="text" id="badgeZh" placeholder="例如：月度冠军">
+                    </div>
+                    <div class="form-group">
+                        <label>徽章（英文）*</label>
+                        <input type="text" id="badgeEn" placeholder="例如：Monthly Champion">
+                    </div>
+                    <button class="btn" onclick="saveStreamer()">保存主播</button>
+                </div>
+
+                <div class="card">
+                    <h3>当前排行榜</h3>
+                    <div id="leaderboardList"></div>
+                </div>
+            </div>
+
+            <!-- Admins -->
+            <div id="admins" class="tab-content">
+                <div class="card">
+                    <h3>添加新管理员</h3>
+                    <div class="form-group">
+                        <label>用户名*</label>
+                        <input type="text" id="newAdminUsername" placeholder="至少4个字符">
+                    </div>
+                    <div class="form-group">
+                        <label>密码*</label>
+                        <input type="password" id="newAdminPassword" placeholder="至少6个字符">
+                    </div>
+                    <div class="form-group">
+                        <label>姓名</label>
+                        <input type="text" id="newAdminName">
+                    </div>
+                    <button class="btn" onclick="addAdmin()">添加管理员</button>
+                </div>
+
+                <div class="card">
+                    <h3>管理员列表</h3>
+                    <div id="adminsTable"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize
+        function initializeAdmins() {
+            const admins = JSON.parse(localStorage.getItem('admins') || '[]');
+            if (admins.length === 0) {
+                admins.push({
+                    id: Date.now(),
+                    username: 'admin',
+                    password: hashPassword('admin123'),
+                    name: '超级管理员',
+                    createdAt: new Date().toISOString(),
+                    isDefault: true
+                });
+                localStorage.setItem('admins', JSON.stringify(admins));
+            }
+        }
+
+        function hashPassword(password) {
+            let hash = 0;
+            for (let i = 0; i < password.length; i++) {
+                hash = ((hash << 5) - hash) + password.charCodeAt(i);
+                hash = hash & hash;
+            }
+            return hash.toString();
+        }
+
+        function checkAuth() {
+            const currentUser = localStorage.getItem('currentUser');
+            if (!currentUser) {
+                document.getElementById('loginPage').classList.remove('hidden');
+                document.getElementById('dashboard').classList.add('hidden');
+                return false;
+            }
+            document.getElementById('loginPage').classList.add('hidden');
+            document.getElementById('dashboard').classList.remove('hidden');
+            document.getElementById('currentUser').textContent = '👤 ' + currentUser;
+            return true;
+        }
+
+        function login() {
+            const username = document.getElementById('loginUsername').value.trim();
+            const password = document.getElementById('loginPassword').value;
+            const errorDiv = document.getElementById('loginError');
+
+            if (!username || !password) {
+                errorDiv.textContent = '请输入用户名和密码';
+                errorDiv.classList.add('show');
+                return;
+            }
+
+            const admins = JSON.parse(localStorage.getItem('admins') || '[]');
+            const admin = admins.find(a => a.username === username && a.password === hashPassword(password));
+
+            if (admin) {
+                localStorage.setItem('currentUser', admin.name || admin.username);
+                localStorage.setItem('currentUserId', admin.id);
+                errorDiv.classList.remove('show');
+                checkAuth();
+                loadSubmissions();
+            } else {
+                errorDiv.textContent = '用户名或密码错误';
+                errorDiv.classList.add('show');
+            }
+        }
+
+        function logout() {
+            if (confirm('确定要登出吗？')) {
+                localStorage.removeItem('currentUser');
+                localStorage.removeItem('currentUserId');
+                checkAuth();
+            }
+        }
+
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            event.target.classList.add('active');
+            document.getElementById(tabName).classList.add('active');
+            
+            if (tabName === 'submissions') loadSubmissions();
+            else if (tabName === 'leaderboard') loadLeaderboard();
+            else if (tabName === 'admins') loadAdmins();
+        }
+
+        function loadSubmissions() {
+            const submissions = JSON.parse(localStorage.getItem('submissions') || '[]');
+            const tableDiv = document.getElementById('submissionsTable');
+            
+            if (submissions.length === 0) {
+                tableDiv.innerHTML = '<p>暂无申请</p>';
+                return;
+            }
+            
+            let html = '<table><thead><tr><th>姓名</th><th>电话</th><th>经验</th><th>提交时间</th><th>操作</th></tr></thead><tbody>';
+            submissions.forEach(sub => {
+                html += `<tr>
+                    <td>${sub.name || '-'}</td>
+                    <td>${sub.phone || '-'}</td>
+                    <td>${sub.experience || '-'}</td>
+                    <td>${sub.submittedAt || '-'}</td>
+                    <td><button class="btn btn-small" onclick="deleteSubmission(${sub.id})">删除</button></td>
+                </tr>`;
+            });
+            html += '</tbody></table>';
+            tableDiv.innerHTML = html;
+        }
+
+        function deleteSubmission(id) {
+            if (!confirm('确定删除？')) return;
+            const submissions = JSON.parse(localStorage.getItem('submissions') || '[]');
+            localStorage.setItem('submissions', JSON.stringify(submissions.filter(s => s.id !== id)));
+            loadSubmissions();
+        }
+
+        function loadLeaderboard() {
+            const leaderboard = JSON.parse(localStorage.getItem('leaderboard') || '[]');
+            const listDiv = document.getElementById('leaderboardList');
+            
+            if (leaderboard.length === 0) {
+                listDiv.innerHTML = '<p>暂无排行榜</p>';
+                return;
+            }
+            
+            let html = '';
+            leaderboard.forEach((s, i) => {
+                html += `<div style="padding: 1rem; background: var(--bg-secondary); margin-bottom: 1rem; border-radius: 10px;">
+                    <strong>${i+1}. ${s.nameZh} / ${s.nameEn}</strong> - ¥${s.income.toLocaleString()}
+                    <div style="margin-top: 0.5rem;">
+                        <button class="btn btn-small" onclick="editStreamer(${i})">编辑</button>
+                        <button class="btn btn-small" onclick="deleteStreamer(${i})">删除</button>
+                        ${i > 0 ? `<button class="btn btn-small" onclick="moveUp(${i})">↑</button>` : ''}
+                        ${i < leaderboard.length - 1 ? `<button class="btn btn-small" onclick="moveDown(${i})">↓</button>` : ''}
+                    </div>
+                </div>`;
+            });
+            listDiv.innerHTML = html;
+        }
+
+        function saveStreamer() {
+            const leaderboard = JSON.parse(localStorage.getItem('leaderboard') || '[]');
+            const editId = document.getElementById('editId').value;
+            
+            const streamer = {
+                nameZh: document.getElementById('streamerNameZh').value.trim(),
+                nameEn: document.getElementById('streamerNameEn').value.trim(),
+                income: parseInt(document.getElementById('income').value),
+                hours: parseInt(document.getElementById('hours').value),
+                fansGrowth: parseInt(document.getElementById('fansGrowth').value),
+                badgeZh: document.getElementById('badgeZh').value.trim(),
+                badgeEn: document.getElementById('badgeEn').value.trim()
+            };
+            
+            if (!streamer.nameZh || !streamer.income) {
+                alert('请填写必填项！');
+                return;
+            }
+            
+            if (editId) {
+                leaderboard[parseInt(editId)] = streamer;
+            } else {
+                leaderboard.push(streamer);
+            }
+            
+            localStorage.setItem('leaderboard', JSON.stringify(leaderboard));
+            document.getElementById('editId').value = '';
+            document.getElementById('streamerNameZh').value = '';
+            document.getElementById('streamerNameEn').value = '';
+            document.getElementById('income').value = '';
+            document.getElementById('hours').value = '';
+            document.getElementById('fansGrowth').value = '';
+            document.getElementById('badgeZh').value = '';
+            document.getElementById('badgeEn').value = '';
+            loadLeaderboard();
+            alert('保存成功！');
+        }
+
+        function editStreamer(index) {
+            const leaderboard = JSON.parse(localStorage.getItem('leaderboard') || '[]');
+            const s = leaderboard[index];
+            document.getElementById('editId').value = index;
+            document.getElementById('streamerNameZh').value = s.nameZh;
+            document.getElementById('streamerNameEn').value = s.nameEn;
+            document.getElementById('income').value = s.income;
+            document.getElementById('hours').value = s.hours;
+            document.getElementById('fansGrowth').value = s.fansGrowth;
+            document.getElementById('badgeZh').value = s.badgeZh;
+            document.getElementById('badgeEn').value = s.badgeEn;
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function deleteStreamer(index) {
+            if (!confirm('确定删除？')) return;
+            const leaderboard = JSON.parse(localStorage.getItem('leaderboard') || '[]');
+            leaderboard.splice(index, 1);
+            localStorage.setItem('leaderboard', JSON.stringify(leaderboard));
+            loadLeaderboard();
+        }
+
+        function moveUp(index) {
+            const leaderboard = JSON.parse(localStorage.getItem('leaderboard') || '[]');
+            [leaderboard[index], leaderboard[index - 1]] = [leaderboard[index - 1], leaderboard[index]];
+            localStorage.setItem('leaderboard', JSON.stringify(leaderboard));
+            loadLeaderboard();
+        }
+
+        function moveDown(index) {
+            const leaderboard = JSON.parse(localStorage.getItem('leaderboard') || '[]');
+            [leaderboard[index], leaderboard[index + 1]] = [leaderboard[index + 1], leaderboard[index]];
+            localStorage.setItem('leaderboard', JSON.stringify(leaderboard));
+            loadLeaderboard();
+        }
+
+        function loadAdmins() {
+            const admins = JSON.parse(localStorage.getItem('admins') || '[]');
+            const tableDiv = document.getElementById('adminsTable');
+            
+            let html = '<table><thead><tr><th>用户名</th><th>姓名</th><th>操作</th></tr></thead><tbody>';
+            admins.forEach(admin => {
+                html += `<tr>
+                    <td>${admin.username}</td>
+                    <td>${admin.name || '-'}</td>
+                    <td>${!admin.isDefault ? `<button class="btn btn-small" onclick="deleteAdmin(${admin.id})">删除</button>` : '-'}</td>
+                </tr>`;
+            });
+            html += '</tbody></table>';
+            tableDiv.innerHTML = html;
+        }
+
+        function addAdmin() {
+            const username = document.getElementById('newAdminUsername').value.trim();
+            const password = document.getElementById('newAdminPassword').value;
+            const name = document.getElementById('newAdminName').value.trim();
+
+            if (!username || !password) {
+                alert('请填写用户名和密码！');
+                return;
+            }
+
+            if (username.length < 4 || password.length < 6) {
+                alert('用户名至少4个字符，密码至少6个字符！');
+                return;
+            }
+
+            const admins = JSON.parse(localStorage.getItem('admins') || '[]');
+            
+            if (admins.find(a => a.username === username)) {
+                alert('用户名已存在！');
+                return;
+            }
+
+            admins.push({
+                id: Date.now(),
+                username,
+                password: hashPassword(password),
+                name,
+                createdAt: new Date().toISOString(),
+                isDefault: false
+            });
+
+            localStorage.setItem('admins', JSON.stringify(admins));
+            document.getElementById('newAdminUsername').value = '';
+            document.getElementById('newAdminPassword').value = '';
+            document.getElementById('newAdminName').value = '';
+            loadAdmins();
+            alert('添加成功！');
+        }
+
+        function deleteAdmin(id) {
+            if (!confirm('确定删除？')) return;
+            const admins = JSON.parse(localStorage.getItem('admins') || '[]');
+            localStorage.setItem('admins', JSON.stringify(admins.filter(a => a.id !== id)));
+            loadAdmins();
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeAdmins();
+            checkAuth();
+            [document.getElementById('loginUsername'), document.getElementById('loginPassword')].forEach(input => {
+                if (input) input.addEventListener('keypress', (e) => e.key === 'Enter' && login());
+            });
+        });
+    </script>
+</body>
+</html>
