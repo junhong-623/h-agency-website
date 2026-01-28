@@ -5,6 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ℋ Agency 管理后台</title>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Noto+Sans+SC:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+    
     <style>
         :root {
             --bg-primary: #fff9fb;
@@ -28,11 +33,7 @@
             --text-secondary: #ffb6c9;
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             font-family: 'Noto Sans SC', sans-serif;
@@ -41,7 +42,6 @@
             transition: all 0.4s ease;
         }
 
-        /* Login Page */
         .login-container {
             min-height: 100vh;
             display: flex;
@@ -78,9 +78,7 @@
             font-size: 1.2rem;
         }
 
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
+        .form-group { margin-bottom: 1.5rem; }
 
         label {
             display: block;
@@ -124,6 +122,24 @@
             box-shadow: var(--shadow-hover);
         }
 
+        .btn-secondary {
+            background: transparent;
+            border: 2px solid var(--accent-pink);
+            color: var(--accent-pink);
+        }
+
+        .btn-secondary:hover {
+            background: var(--accent-pink);
+            color: white;
+        }
+
+        .btn-small {
+            padding: 0.5rem 1rem;
+            width: auto;
+            display: inline-block;
+            margin: 0.2rem;
+        }
+
         .error-message {
             background: #ffe5ec;
             color: #d91e63;
@@ -133,15 +149,21 @@
             display: none;
         }
 
-        .error-message.show {
-            display: block;
+        .error-message.show { display: block; }
+
+        .success-message {
+            background: #e8f5e9;
+            color: #2e7d32;
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            display: none;
         }
 
-        .hidden {
-            display: none !important;
-        }
+        .success-message.show { display: block; }
 
-        /* Dashboard - similar to previous styles but simplified for file size */
+        .hidden { display: none !important; }
+
         .header {
             background: var(--bg-secondary);
             padding: 1.5rem 2rem;
@@ -174,6 +196,8 @@
             gap: 1rem;
             margin-bottom: 2rem;
             flex-wrap: wrap;
+            border-bottom: 2px solid var(--accent-rose);
+            padding-bottom: 0.5rem;
         }
 
         .tab {
@@ -183,8 +207,9 @@
             color: var(--text-secondary);
             font-weight: 600;
             cursor: pointer;
-            border-radius: 10px;
+            border-radius: 10px 10px 0 0;
             font-family: 'Noto Sans SC', sans-serif;
+            transition: all 0.3s ease;
         }
 
         .tab.active {
@@ -192,13 +217,8 @@
             color: white;
         }
 
-        .tab-content {
-            display: none;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
 
         .card {
             background: var(--bg-card);
@@ -225,19 +245,50 @@
             border-bottom: 1px solid var(--accent-rose);
         }
 
-        .btn-small {
-            padding: 0.5rem 1rem;
-            width: auto;
-            display: inline-block;
-            margin: 0.2rem;
+        .password-strength {
+            margin-top: 0.5rem;
+            height: 4px;
+            border-radius: 2px;
+            background: #e0e0e0;
+            overflow: hidden;
         }
 
-        .default-info {
-            background: #fff3e0;
+        .password-strength-bar {
+            height: 100%;
+            transition: all 0.3s ease;
+        }
+
+        .strength-weak { background: #f44336; width: 33%; }
+        .strength-medium { background: #ff9800; width: 66%; }
+        .strength-strong { background: #4caf50; width: 100%; }
+
+        .password-hint {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-top: 0.5rem;
+        }
+
+        .info-box {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
             padding: 1rem;
-            border-radius: 10px;
             margin-bottom: 1.5rem;
+            border-radius: 8px;
+        }
+
+        .warning-box {
+            background: #fff3e0;
             border-left: 4px solid #ff6b9d;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            border-radius: 8px;
+        }
+
+        @media (max-width: 768px) {
+            .tabs {
+                justify-content: flex-start;
+                overflow-x: auto;
+            }
         }
     </style>
 </head>
@@ -247,11 +298,11 @@
         <div class="login-box">
             <div class="login-logo">ℋ Agency</div>
             <div class="login-title">管理后台登录</div>
-            <div class="default-info">
-                <strong>🔑 默认管理员账号：</strong><br>
+            <div class="warning-box">
+                <strong>🔑 默认账号：</strong><br>
                 用户名: <code>admin</code><br>
                 密码: <code>admin123</code><br>
-                <small style="color: var(--text-secondary);">首次登录后请在"管理员设置"中修改密码或添加新管理员</small>
+                <small>首次登录后请立即修改密码！</small>
             </div>
             <div id="loginError" class="error-message"></div>
             <div>
@@ -272,9 +323,9 @@
     <div id="dashboard" class="hidden">
         <div class="header">
             <div class="logo">ℋ Agency 管理后台</div>
-            <div style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
+            <div style="display: flex; gap: 1rem; align-items: center;">
                 <span id="currentUser"></span>
-                <button class="btn btn-small" onclick="logout()">登出</button>
+                <button class="btn btn-small btn-secondary" onclick="logout()">登出</button>
             </div>
         </div>
 
@@ -282,18 +333,19 @@
             <div class="tabs">
                 <button class="tab active" onclick="switchTab('submissions')">申请表单</button>
                 <button class="tab" onclick="switchTab('leaderboard')">排行榜管理</button>
+                <button class="tab" onclick="switchTab('password')">修改密码</button>
                 <button class="tab" onclick="switchTab('admins')">管理员设置</button>
             </div>
 
-            <!-- Submissions -->
+            <!-- Submissions Tab -->
             <div id="submissions" class="tab-content active">
                 <div class="card">
                     <h3>申请列表</h3>
-                    <div id="submissionsTable"></div>
+                    <div id="submissionsTable">加载中...</div>
                 </div>
             </div>
 
-            <!-- Leaderboard -->
+            <!-- Leaderboard Tab -->
             <div id="leaderboard" class="tab-content">
                 <div class="card">
                     <h3>添加/编辑主播</h3>
@@ -331,11 +383,48 @@
 
                 <div class="card">
                     <h3>当前排行榜</h3>
-                    <div id="leaderboardList"></div>
+                    <div id="leaderboardList">加载中...</div>
                 </div>
             </div>
 
-            <!-- Admins -->
+            <!-- Change Password Tab -->
+            <div id="password" class="tab-content">
+                <div class="card">
+                    <h3>修改密码</h3>
+                    <div class="info-box">
+                        <strong>ℹ️ 安全提示：</strong><br>
+                        • 密码长度至少6个字符<br>
+                        • 建议使用字母、数字和特殊字符的组合<br>
+                        • 修改密码后需要重新登录
+                    </div>
+                    <div id="passwordError" class="error-message"></div>
+                    <div id="passwordSuccess" class="success-message"></div>
+                    
+                    <div class="form-group">
+                        <label>当前密码 *</label>
+                        <input type="password" id="currentPassword" placeholder="请输入当前密码">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>新密码 *</label>
+                        <input type="password" id="newPassword" placeholder="请输入新密码（至少6个字符）" oninput="checkPasswordStrength()">
+                        <div class="password-strength">
+                            <div id="strengthBar" class="password-strength-bar"></div>
+                        </div>
+                        <div id="strengthText" class="password-hint"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>确认新密码 *</label>
+                        <input type="password" id="confirmPassword" placeholder="请再次输入新密码">
+                    </div>
+                    
+                    <button class="btn" onclick="changePassword()">确认修改</button>
+                    <button class="btn btn-secondary" onclick="resetPasswordForm()" style="margin-top: 1rem;">取消</button>
+                </div>
+            </div>
+
+            <!-- Admins Tab -->
             <div id="admins" class="tab-content">
                 <div class="card">
                     <h3>添加新管理员</h3>
@@ -356,28 +445,36 @@
 
                 <div class="card">
                     <h3>管理员列表</h3>
-                    <div id="adminsTable"></div>
+                    <div id="adminsTable">加载中...</div>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        // Initialize
-        function initializeAdmins() {
-            const admins = JSON.parse(localStorage.getItem('admins') || '[]');
-            if (admins.length === 0) {
-                admins.push({
-                    id: Date.now(),
-                    username: 'admin',
-                    password: hashPassword('admin123'),
-                    name: '超级管理员',
-                    createdAt: new Date().toISOString(),
-                    isDefault: true
-                });
-                localStorage.setItem('admins', JSON.stringify(admins));
-            }
+        // Firebase Config
+        const firebaseConfig = {
+          apiKey: "AIzaSyBSqkaYW6UbxyaLHPLZvfhaIIJFOvPeYN0",
+          authDomain: "h-agency-recruitment.firebaseapp.com",
+          databaseURL: "https://h-agency-recruitment-default-rtdb.asia-southeast1.firebasedatabase.app",
+          projectId: "h-agency-recruitment",
+          storageBucket: "h-agency-recruitment.firebasestorage.app",
+          messagingSenderId: "198153569809",
+          appId: "1:198153569809:web:3e018109dba4db014793b0",
+          measurementId: "G-M6E1KP1FYL"
+        };
+
+        let database;
+        try {
+            firebase.initializeApp(firebaseConfig);
+            database = firebase.database();
+            console.log('Firebase initialized');
+        } catch (error) {
+            console.error('Firebase error:', error);
+            alert('Firebase未配置！请先配置Firebase');
         }
+
+        let currentAdminKey = null;
 
         function hashPassword(password) {
             let hash = 0;
@@ -388,20 +485,34 @@
             return hash.toString();
         }
 
+        async function initDefaultAdmin() {
+            if (!database) return;
+            const snapshot = await database.ref('admins').once('value');
+            if (!snapshot.val()) {
+                await database.ref('admins').push({
+                    username: 'admin',
+                    password: hashPassword('admin123'),
+                    name: '超级管理员',
+                    isDefault: true
+                });
+            }
+        }
+
         function checkAuth() {
-            const currentUser = localStorage.getItem('currentUser');
-            if (!currentUser) {
+            const user = localStorage.getItem('currentUser');
+            currentAdminKey = localStorage.getItem('currentAdminKey');
+            if (!user || !currentAdminKey) {
                 document.getElementById('loginPage').classList.remove('hidden');
                 document.getElementById('dashboard').classList.add('hidden');
                 return false;
             }
             document.getElementById('loginPage').classList.add('hidden');
             document.getElementById('dashboard').classList.remove('hidden');
-            document.getElementById('currentUser').textContent = '👤 ' + currentUser;
+            document.getElementById('currentUser').textContent = '👤 ' + user;
             return true;
         }
 
-        function login() {
+        async function login() {
             const username = document.getElementById('loginUsername').value.trim();
             const password = document.getElementById('loginPassword').value;
             const errorDiv = document.getElementById('loginError');
@@ -412,12 +523,28 @@
                 return;
             }
 
-            const admins = JSON.parse(localStorage.getItem('admins') || '[]');
-            const admin = admins.find(a => a.username === username && a.password === hashPassword(password));
+            const snapshot = await database.ref('admins').once('value');
+            const admins = snapshot.val();
+            if (!admins) {
+                errorDiv.textContent = '管理员数据不存在';
+                errorDiv.classList.add('show');
+                return;
+            }
 
-            if (admin) {
-                localStorage.setItem('currentUser', admin.name || admin.username);
-                localStorage.setItem('currentUserId', admin.id);
+            const hashedPwd = hashPassword(password);
+            let found = null, foundKey = null;
+
+            for (const [key, admin] of Object.entries(admins)) {
+                if (admin.username === username && admin.password === hashedPwd) {
+                    found = admin;
+                    foundKey = key;
+                    break;
+                }
+            }
+
+            if (found) {
+                localStorage.setItem('currentUser', found.name || found.username);
+                localStorage.setItem('currentAdminKey', foundKey);
                 errorDiv.classList.remove('show');
                 checkAuth();
                 loadSubmissions();
@@ -429,200 +556,249 @@
 
         function logout() {
             if (confirm('确定要登出吗？')) {
-                localStorage.removeItem('currentUser');
-                localStorage.removeItem('currentUserId');
+                localStorage.clear();
                 checkAuth();
             }
         }
 
         function switchTab(tabName) {
-            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
-            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
-            
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
             event.target.classList.add('active');
             document.getElementById(tabName).classList.add('active');
-            
             if (tabName === 'submissions') loadSubmissions();
             else if (tabName === 'leaderboard') loadLeaderboard();
             else if (tabName === 'admins') loadAdmins();
         }
 
-        function loadSubmissions() {
-            const submissions = JSON.parse(localStorage.getItem('submissions') || '[]');
+        async function loadSubmissions() {
+            if (!database) return;
+            const snapshot = await database.ref('submissions').once('value');
+            const data = snapshot.val();
             const tableDiv = document.getElementById('submissionsTable');
-            
-            if (submissions.length === 0) {
+            if (!data) {
                 tableDiv.innerHTML = '<p>暂无申请</p>';
                 return;
             }
-            
+            const arr = Object.entries(data).map(([k, v]) => ({...v, key: k}));
             let html = '<table><thead><tr><th>姓名</th><th>电话</th><th>经验</th><th>提交时间</th><th>操作</th></tr></thead><tbody>';
-            submissions.forEach(sub => {
-                html += `<tr>
-                    <td>${sub.name || '-'}</td>
-                    <td>${sub.phone || '-'}</td>
-                    <td>${sub.experience || '-'}</td>
-                    <td>${sub.submittedAt || '-'}</td>
-                    <td><button class="btn btn-small" onclick="deleteSubmission(${sub.id})">删除</button></td>
-                </tr>`;
+            arr.forEach(sub => {
+                const time = sub.submittedAt ? new Date(sub.submittedAt).toLocaleString('zh-CN') : '-';
+                html += `<tr><td>${sub.name || '-'}</td><td>${sub.phone || '-'}</td><td>${sub.experience || '-'}</td><td>${time}</td><td><button class="btn btn-small" onclick="deleteSubmission('${sub.key}')">删除</button></td></tr>`;
             });
             html += '</tbody></table>';
             tableDiv.innerHTML = html;
         }
 
-        function deleteSubmission(id) {
-            if (!confirm('确定删除？')) return;
-            const submissions = JSON.parse(localStorage.getItem('submissions') || '[]');
-            localStorage.setItem('submissions', JSON.stringify(submissions.filter(s => s.id !== id)));
-            loadSubmissions();
+        async function deleteSubmission(key) {
+            if (confirm('确定删除？')) {
+                await database.ref('submissions/' + key).remove();
+                loadSubmissions();
+            }
         }
 
-        function loadLeaderboard() {
-            const leaderboard = JSON.parse(localStorage.getItem('leaderboard') || '[]');
+        async function loadLeaderboard() {
+            if (!database) return;
+            const snapshot = await database.ref('leaderboard').once('value');
+            const data = snapshot.val();
             const listDiv = document.getElementById('leaderboardList');
-            
-            if (leaderboard.length === 0) {
+            if (!data) {
                 listDiv.innerHTML = '<p>暂无排行榜</p>';
                 return;
             }
-            
+            const arr = Object.entries(data).map(([k, v]) => ({...v, key: k}));
+            arr.sort((a, b) => (b.income || 0) - (a.income || 0));
             let html = '';
-            leaderboard.forEach((s, i) => {
-                html += `<div style="padding: 1rem; background: var(--bg-secondary); margin-bottom: 1rem; border-radius: 10px;">
-                    <strong>${i+1}. ${s.nameZh} / ${s.nameEn}</strong> - ¥${s.income.toLocaleString()}
-                    <div style="margin-top: 0.5rem;">
-                        <button class="btn btn-small" onclick="editStreamer(${i})">编辑</button>
-                        <button class="btn btn-small" onclick="deleteStreamer(${i})">删除</button>
-                        ${i > 0 ? `<button class="btn btn-small" onclick="moveUp(${i})">↑</button>` : ''}
-                        ${i < leaderboard.length - 1 ? `<button class="btn btn-small" onclick="moveDown(${i})">↓</button>` : ''}
-                    </div>
-                </div>`;
+            arr.forEach((s, i) => {
+                html += `<div style="padding:1rem;background:var(--bg-secondary);margin-bottom:1rem;border-radius:10px;"><strong>${i+1}. ${s.nameZh||'-'} / ${s.nameEn||'-'}</strong> - ¥${(s.income||0).toLocaleString()}<div style="margin-top:0.5rem;"><button class="btn btn-small" onclick="editStreamer('${s.key}')">编辑</button><button class="btn btn-small btn-secondary" onclick="deleteStreamer('${s.key}')">删除</button></div></div>`;
             });
             listDiv.innerHTML = html;
         }
 
-        function saveStreamer() {
-            const leaderboard = JSON.parse(localStorage.getItem('leaderboard') || '[]');
+        async function saveStreamer() {
             const editId = document.getElementById('editId').value;
-            
             const streamer = {
                 nameZh: document.getElementById('streamerNameZh').value.trim(),
                 nameEn: document.getElementById('streamerNameEn').value.trim(),
-                income: parseInt(document.getElementById('income').value),
-                hours: parseInt(document.getElementById('hours').value),
-                fansGrowth: parseInt(document.getElementById('fansGrowth').value),
+                income: parseInt(document.getElementById('income').value) || 0,
+                hours: parseInt(document.getElementById('hours').value) || 0,
+                fansGrowth: parseInt(document.getElementById('fansGrowth').value) || 0,
                 badgeZh: document.getElementById('badgeZh').value.trim(),
                 badgeEn: document.getElementById('badgeEn').value.trim()
             };
-            
-            if (!streamer.nameZh || !streamer.income) {
+            if (!streamer.nameZh || !streamer.nameEn) {
                 alert('请填写必填项！');
                 return;
             }
-            
             if (editId) {
-                leaderboard[parseInt(editId)] = streamer;
+                await database.ref('leaderboard/' + editId).set(streamer);
             } else {
-                leaderboard.push(streamer);
+                await database.ref('leaderboard').push(streamer);
             }
-            
-            localStorage.setItem('leaderboard', JSON.stringify(leaderboard));
             document.getElementById('editId').value = '';
-            document.getElementById('streamerNameZh').value = '';
-            document.getElementById('streamerNameEn').value = '';
-            document.getElementById('income').value = '';
-            document.getElementById('hours').value = '';
-            document.getElementById('fansGrowth').value = '';
-            document.getElementById('badgeZh').value = '';
-            document.getElementById('badgeEn').value = '';
+            ['streamerNameZh', 'streamerNameEn', 'income', 'hours', 'fansGrowth', 'badgeZh', 'badgeEn'].forEach(id => {
+                document.getElementById(id).value = '';
+            });
             loadLeaderboard();
             alert('保存成功！');
         }
 
-        function editStreamer(index) {
-            const leaderboard = JSON.parse(localStorage.getItem('leaderboard') || '[]');
-            const s = leaderboard[index];
-            document.getElementById('editId').value = index;
-            document.getElementById('streamerNameZh').value = s.nameZh;
-            document.getElementById('streamerNameEn').value = s.nameEn;
-            document.getElementById('income').value = s.income;
-            document.getElementById('hours').value = s.hours;
-            document.getElementById('fansGrowth').value = s.fansGrowth;
-            document.getElementById('badgeZh').value = s.badgeZh;
-            document.getElementById('badgeEn').value = s.badgeEn;
+        async function editStreamer(key) {
+            const snapshot = await database.ref('leaderboard/' + key).once('value');
+            const s = snapshot.val();
+            document.getElementById('editId').value = key;
+            document.getElementById('streamerNameZh').value = s.nameZh || '';
+            document.getElementById('streamerNameEn').value = s.nameEn || '';
+            document.getElementById('income').value = s.income || '';
+            document.getElementById('hours').value = s.hours || '';
+            document.getElementById('fansGrowth').value = s.fansGrowth || '';
+            document.getElementById('badgeZh').value = s.badgeZh || '';
+            document.getElementById('badgeEn').value = s.badgeEn || '';
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        function deleteStreamer(index) {
-            if (!confirm('确定删除？')) return;
-            const leaderboard = JSON.parse(localStorage.getItem('leaderboard') || '[]');
-            leaderboard.splice(index, 1);
-            localStorage.setItem('leaderboard', JSON.stringify(leaderboard));
-            loadLeaderboard();
+        async function deleteStreamer(key) {
+            if (confirm('确定删除？')) {
+                await database.ref('leaderboard/' + key).remove();
+                loadLeaderboard();
+            }
         }
 
-        function moveUp(index) {
-            const leaderboard = JSON.parse(localStorage.getItem('leaderboard') || '[]');
-            [leaderboard[index], leaderboard[index - 1]] = [leaderboard[index - 1], leaderboard[index]];
-            localStorage.setItem('leaderboard', JSON.stringify(leaderboard));
-            loadLeaderboard();
+        function checkPasswordStrength() {
+            const pwd = document.getElementById('newPassword').value;
+            const bar = document.getElementById('strengthBar');
+            const text = document.getElementById('strengthText');
+            if (!pwd) {
+                bar.className = 'password-strength-bar';
+                text.textContent = '';
+                return;
+            }
+            let strength = 0;
+            if (pwd.length >= 6) strength++;
+            if (pwd.length >= 10) strength++;
+            if (/[a-z]/.test(pwd) && /[A-Z]/.test(pwd)) strength++;
+            if (/\d/.test(pwd)) strength++;
+            if (/[^a-zA-Z0-9]/.test(pwd)) strength++;
+            if (strength <= 2) {
+                bar.className = 'password-strength-bar strength-weak';
+                text.textContent = '密码强度：弱';
+                text.style.color = '#f44336';
+            } else if (strength <= 3) {
+                bar.className = 'password-strength-bar strength-medium';
+                text.textContent = '密码强度：中等';
+                text.style.color = '#ff9800';
+            } else {
+                bar.className = 'password-strength-bar strength-strong';
+                text.textContent = '密码强度：强';
+                text.style.color = '#4caf50';
+            }
         }
 
-        function moveDown(index) {
-            const leaderboard = JSON.parse(localStorage.getItem('leaderboard') || '[]');
-            [leaderboard[index], leaderboard[index + 1]] = [leaderboard[index + 1], leaderboard[index]];
-            localStorage.setItem('leaderboard', JSON.stringify(leaderboard));
-            loadLeaderboard();
+        async function changePassword() {
+            const current = document.getElementById('currentPassword').value;
+            const newPwd = document.getElementById('newPassword').value;
+            const confirm = document.getElementById('confirmPassword').value;
+            const errorDiv = document.getElementById('passwordError');
+            const successDiv = document.getElementById('passwordSuccess');
+            errorDiv.classList.remove('show');
+            successDiv.classList.remove('show');
+            if (!current || !newPwd || !confirm) {
+                errorDiv.textContent = '请填写所有字段';
+                errorDiv.classList.add('show');
+                return;
+            }
+            if (newPwd.length < 6) {
+                errorDiv.textContent = '新密码长度至少6个字符';
+                errorDiv.classList.add('show');
+                return;
+            }
+            if (newPwd !== confirm) {
+                errorDiv.textContent = '两次输入的新密码不一致';
+                errorDiv.classList.add('show');
+                return;
+            }
+            if (!currentAdminKey) {
+                errorDiv.textContent = '未找到当前用户，请重新登录';
+                errorDiv.classList.add('show');
+                return;
+            }
+            const snapshot = await database.ref('admins/' + currentAdminKey).once('value');
+            const admin = snapshot.val();
+            if (!admin || admin.password !== hashPassword(current)) {
+                errorDiv.textContent = '当前密码错误';
+                errorDiv.classList.add('show');
+                return;
+            }
+            try {
+                await database.ref('admins/' + currentAdminKey).update({
+                    password: hashPassword(newPwd)
+                });
+                successDiv.textContent = '密码修改成功！2秒后将自动登出，请使用新密码重新登录';
+                successDiv.classList.add('show');
+                setTimeout(() => { logout(); }, 2000);
+            } catch (error) {
+                errorDiv.textContent = '修改密码失败：' + error.message;
+                errorDiv.classList.add('show');
+            }
         }
 
-        function loadAdmins() {
-            const admins = JSON.parse(localStorage.getItem('admins') || '[]');
+        function resetPasswordForm() {
+            ['currentPassword', 'newPassword', 'confirmPassword'].forEach(id => {
+                document.getElementById(id).value = '';
+            });
+            document.getElementById('passwordError').classList.remove('show');
+            document.getElementById('passwordSuccess').classList.remove('show');
+            document.getElementById('strengthBar').className = 'password-strength-bar';
+            document.getElementById('strengthText').textContent = '';
+        }
+
+        async function loadAdmins() {
+            if (!database) return;
+            const snapshot = await database.ref('admins').once('value');
+            const data = snapshot.val();
             const tableDiv = document.getElementById('adminsTable');
-            
+            if (!data) {
+                tableDiv.innerHTML = '<p>暂无管理员</p>';
+                return;
+            }
+            const arr = Object.entries(data).map(([k, v]) => ({...v, key: k}));
             let html = '<table><thead><tr><th>用户名</th><th>姓名</th><th>操作</th></tr></thead><tbody>';
-            admins.forEach(admin => {
-                html += `<tr>
-                    <td>${admin.username}</td>
-                    <td>${admin.name || '-'}</td>
-                    <td>${!admin.isDefault ? `<button class="btn btn-small" onclick="deleteAdmin(${admin.id})">删除</button>` : '-'}</td>
-                </tr>`;
+            arr.forEach(admin => {
+                html += `<tr><td>${admin.username||'-'}</td><td>${admin.name||'-'}</td><td>${!admin.isDefault ? `<button class="btn btn-small btn-secondary" onclick="deleteAdmin('${admin.key}')">删除</button>` : '-'}</td></tr>`;
             });
             html += '</tbody></table>';
             tableDiv.innerHTML = html;
         }
 
-        function addAdmin() {
+        async function addAdmin() {
             const username = document.getElementById('newAdminUsername').value.trim();
             const password = document.getElementById('newAdminPassword').value;
             const name = document.getElementById('newAdminName').value.trim();
-
             if (!username || !password) {
                 alert('请填写用户名和密码！');
                 return;
             }
-
             if (username.length < 4 || password.length < 6) {
                 alert('用户名至少4个字符，密码至少6个字符！');
                 return;
             }
-
-            const admins = JSON.parse(localStorage.getItem('admins') || '[]');
-            
-            if (admins.find(a => a.username === username)) {
-                alert('用户名已存在！');
-                return;
+            const snapshot = await database.ref('admins').once('value');
+            const admins = snapshot.val();
+            if (admins) {
+                for (const admin of Object.values(admins)) {
+                    if (admin.username === username) {
+                        alert('用户名已存在！');
+                        return;
+                    }
+                }
             }
-
-            admins.push({
-                id: Date.now(),
+            await database.ref('admins').push({
                 username,
                 password: hashPassword(password),
                 name,
                 createdAt: new Date().toISOString(),
                 isDefault: false
             });
-
-            localStorage.setItem('admins', JSON.stringify(admins));
             document.getElementById('newAdminUsername').value = '';
             document.getElementById('newAdminPassword').value = '';
             document.getElementById('newAdminName').value = '';
@@ -630,19 +806,20 @@
             alert('添加成功！');
         }
 
-        function deleteAdmin(id) {
-            if (!confirm('确定删除？')) return;
-            const admins = JSON.parse(localStorage.getItem('admins') || '[]');
-            localStorage.setItem('admins', JSON.stringify(admins.filter(a => a.id !== id)));
-            loadAdmins();
+        async function deleteAdmin(key) {
+            if (confirm('确定删除？')) {
+                await database.ref('admins/' + key).remove();
+                loadAdmins();
+            }
         }
 
-        // Initialize
-        document.addEventListener('DOMContentLoaded', () => {
-            initializeAdmins();
+        document.addEventListener('DOMContentLoaded', async () => {
+            await initDefaultAdmin();
             checkAuth();
-            [document.getElementById('loginUsername'), document.getElementById('loginPassword')].forEach(input => {
-                if (input) input.addEventListener('keypress', (e) => e.key === 'Enter' && login());
+            ['loginUsername', 'loginPassword'].forEach(id => {
+                document.getElementById(id).addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') login();
+                });
             });
         });
     </script>
