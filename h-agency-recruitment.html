@@ -905,7 +905,7 @@
             <p class="section-subtitle">填写报名表，开启你的主播之路</p>
         </div>
         <div class="form-container">
-            <div id="applicationForm">
+            <form id="applicationForm" onsubmit="return false;">
                 <div class="form-row">
                     <div class="form-group">
                         <label class="form-label" data-zh="姓名 *" data-en="Name *">姓名 *</label>
@@ -959,8 +959,8 @@
                     <label class="form-label" data-zh="社交媒体账号" data-en="Social Media">社交媒体账号</label>
                     <input type="text" class="form-input" id="applicantSocial" data-placeholder-zh="请输入你的抖音、快手、B站等账号链接" data-placeholder-en="Enter your TikTok, Kuaishou, Bilibili or other social media links" placeholder="请输入你的抖音、快手、B站等账号链接">
                 </div>
-                <button type="button" class="form-submit" id="submitBtn" data-zh="提交申请" data-en="Submit Application">提交申请</button>
-            </div>
+                <button type="submit" class="form-submit" data-zh="提交申请" data-en="Submit Application">提交申请</button>
+            </form>
         </div>
     </section>
 
