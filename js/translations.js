@@ -262,13 +262,6 @@ function updatePageLanguage() {
     if (langToggle) {
         langToggle.textContent = currentLang === 'zh' ? 'EN' : '中文';
     }
-    
-    // Update footer
-    const footerTagline = document.querySelector('.footer-content p');
-    if (footerTagline) footerTagline.setAttribute('data-zh', t.footerTagline);
-    
-    const footerCopyright = document.querySelector('.copyright');
-    if (footerCopyright) footerCopyright.setAttribute('data-zh', t.footerCopyright);
 }
 
 // Get translation for a specific key
