@@ -177,7 +177,7 @@ async function handleFormSubmit(e) {
         try {
             const templateParams = {
                 from_name: formData.name,
-                reply_to: formData.email || 'noreply@hagency.com',
+                to_mail: 'jeejunhong@gmail.com',
                 to_name: 'ℋ Agency 招募团队',
                 message: `新主播申请：${formData.name}`,
                 applicant_name: formData.name,
