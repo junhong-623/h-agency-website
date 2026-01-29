@@ -97,6 +97,11 @@
             font-size: 1rem;
         }
 
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
         input:focus, select:focus, textarea:focus {
             outline: none;
             border-color: var(--accent-pink);
@@ -133,11 +138,20 @@
             color: white;
         }
 
+        .btn-success {
+            background: linear-gradient(135deg, #4caf50 0%, #66bb6a 100%);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #f44336 0%, #e57373 100%);
+        }
+
         .btn-small {
             padding: 0.5rem 1rem;
             width: auto;
             display: inline-block;
             margin: 0.2rem;
+            font-size: 0.9rem;
         }
 
         .error-message {
@@ -245,6 +259,134 @@
             border-bottom: 1px solid var(--accent-rose);
         }
 
+        .status-badge {
+            padding: 0.4rem 1rem;
+            border-radius: 15px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .status-pending {
+            background: #fff3e0;
+            color: #f57c00;
+        }
+
+        .status-approved {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .status-rejected {
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+            overflow-y: auto;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--bg-card);
+            padding: 2rem;
+            border-radius: 20px;
+            max-width: 800px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: var(--shadow-hover);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--accent-rose);
+        }
+
+        .modal-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 2rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .close-btn:hover {
+            color: var(--accent-pink);
+        }
+
+        .info-row {
+            margin-bottom: 1rem;
+            padding: 1rem;
+            background: var(--bg-primary);
+            border-radius: 10px;
+        }
+
+        .info-label {
+            font-weight: 600;
+            color: var(--accent-pink);
+            margin-bottom: 0.3rem;
+            font-size: 0.9rem;
+        }
+
+        .info-value {
+            color: var(--text-primary);
+        }
+
+        .action-section {
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 2px solid var(--accent-rose);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .info-box {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            border-radius: 8px;
+        }
+
+        .warning-box {
+            background: #fff3e0;
+            border-left: 4px solid #ff6b9d;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            border-radius: 8px;
+        }
+
         .password-strength {
             margin-top: 0.5rem;
             height: 4px;
@@ -268,26 +410,34 @@
             margin-top: 0.5rem;
         }
 
-        .info-box {
-            background: #e3f2fd;
-            border-left: 4px solid #2196f3;
-            padding: 1rem;
-            margin-bottom: 1.5rem;
-            border-radius: 8px;
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 1rem;
         }
 
-        .warning-box {
-            background: #fff3e0;
-            border-left: 4px solid #ff6b9d;
-            padding: 1rem;
-            margin-bottom: 1.5rem;
-            border-radius: 8px;
+        .checkbox-group input[type="checkbox"] {
+            width: auto;
+            margin: 0;
         }
 
         @media (max-width: 768px) {
             .tabs {
                 justify-content: flex-start;
                 overflow-x: auto;
+            }
+
+            .modal-content {
+                padding: 1.5rem;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            .action-buttons .btn {
+                width: 100%;
             }
         }
     </style>
@@ -331,7 +481,7 @@
 
         <div class="container">
             <div class="tabs">
-                <button class="tab active" onclick="switchTab('submissions')">申请表单</button>
+                <button class="tab active" onclick="switchTab('submissions')">申请审核</button>
                 <button class="tab" onclick="switchTab('leaderboard')">排行榜管理</button>
                 <button class="tab" onclick="switchTab('password')">修改密码</button>
                 <button class="tab" onclick="switchTab('admins')">管理员设置</button>
@@ -340,7 +490,7 @@
             <!-- Submissions Tab -->
             <div id="submissions" class="tab-content active">
                 <div class="card">
-                    <h3>申请列表</h3>
+                    <h3>申请审核列表</h3>
                     <div id="submissionsTable">加载中...</div>
                 </div>
             </div>
@@ -351,12 +501,16 @@
                     <h3>添加/编辑主播</h3>
                     <input type="hidden" id="editId">
                     <div class="form-group">
-                        <label>主播名字（中文）*</label>
+                        <label>主播昵称（中文）*</label>
                         <input type="text" id="streamerNameZh">
                     </div>
                     <div class="form-group">
-                        <label>主播名字（英文）*</label>
+                        <label>主播昵称（英文）*</label>
                         <input type="text" id="streamerNameEn">
+                    </div>
+                    <div class="form-group">
+                        <label>直播链接</label>
+                        <input type="text" id="streamUrl" placeholder="https://...">
                     </div>
                     <div class="form-group">
                         <label>本月收入 (¥)*</label>
@@ -451,6 +605,20 @@
         </div>
     </div>
 
+    <!-- Review Modal -->
+    <div id="reviewModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">审核申请</h2>
+                <button class="close-btn" onclick="closeReviewModal()">&times;</button>
+            </div>
+            
+            <div id="reviewContent">
+                <!-- Content will be loaded here -->
+            </div>
+        </div>
+    </div>
+
     <script>
         // Firebase Config
         const firebaseConfig = {
@@ -475,6 +643,7 @@
         }
 
         let currentAdminKey = null;
+        let currentReviewId = null;
 
         function hashPassword(password) {
             let hash = 0;
@@ -581,20 +750,238 @@
                 return;
             }
             const arr = Object.entries(data).map(([k, v]) => ({...v, key: k}));
-            let html = '<table><thead><tr><th>姓名</th><th>电话</th><th>经验</th><th>提交时间</th><th>操作</th></tr></thead><tbody>';
+            arr.sort((a, b) => new Date(b.submittedAt) - new Date(a.submittedAt));
+            
+            let html = '<table><thead><tr><th>姓名</th><th>电话</th><th>经验</th><th>提交时间</th><th>状态</th><th>操作</th></tr></thead><tbody>';
             arr.forEach(sub => {
                 const time = sub.submittedAt ? new Date(sub.submittedAt).toLocaleString('zh-CN') : '-';
-                html += `<tr><td>${sub.name || '-'}</td><td>${sub.phone || '-'}</td><td>${sub.experience || '-'}</td><td>${time}</td><td><button class="btn btn-small" onclick="deleteSubmission('${sub.key}')">删除</button></td></tr>`;
+                const status = sub.status || 'pending';
+                let statusBadge = '';
+                if (status === 'pending' || status === 'new') {
+                    statusBadge = '<span class="status-badge status-pending">待审核</span>';
+                } else if (status === 'approved') {
+                    statusBadge = '<span class="status-badge status-approved">已通过</span>';
+                } else if (status === 'rejected') {
+                    statusBadge = '<span class="status-badge status-rejected">已拒绝</span>';
+                }
+                
+                html += `<tr>
+                    <td>${sub.name || '-'}</td>
+                    <td>${sub.phone || '-'}</td>
+                    <td>${sub.experience || '-'}</td>
+                    <td>${time}</td>
+                    <td>${statusBadge}</td>
+                    <td>
+                        <button class="btn btn-small btn-success" onclick="reviewApplication('${sub.key}')">审核</button>
+                        <button class="btn btn-small btn-danger" onclick="deleteSubmission('${sub.key}')">删除</button>
+                    </td>
+                </tr>`;
             });
             html += '</tbody></table>';
             tableDiv.innerHTML = html;
         }
 
-        async function deleteSubmission(key) {
-            if (confirm('确定删除？')) {
-                await database.ref('submissions/' + key).remove();
-                loadSubmissions();
+        async function reviewApplication(key) {
+            currentReviewId = key;
+            const snapshot = await database.ref('submissions/' + key).once('value');
+            const sub = snapshot.val();
+            
+            if (!sub) return;
+            
+            const content = document.getElementById('reviewContent');
+            const status = sub.status || 'pending';
+            
+            content.innerHTML = `
+                <div class="info-row">
+                    <div class="info-label">申请人姓名</div>
+                    <div class="info-value">${sub.name || '-'}</div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">年龄</div>
+                    <div class="info-value">${sub.age || '-'} 岁</div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">联系电话</div>
+                    <div class="info-value">${sub.phone || '-'}</div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">微信号</div>
+                    <div class="info-value">${sub.wechat || '未填写'}</div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">邮箱</div>
+                    <div class="info-value">${sub.email || '未填写'}</div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">直播经验</div>
+                    <div class="info-value">${sub.experience || '-'}</div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">擅长领域</div>
+                    <div class="info-value">${sub.specialization || '-'}</div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">个人简介</div>
+                    <div class="info-value" style="white-space: pre-wrap;">${sub.introduction || '-'}</div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">社交媒体</div>
+                    <div class="info-value">${sub.social || '未填写'}</div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">提交时间</div>
+                    <div class="info-value">${sub.submittedAt ? new Date(sub.submittedAt).toLocaleString('zh-CN') : '-'}</div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">当前状态</div>
+                    <div class="info-value">
+                        ${status === 'approved' ? '✅ 已通过' : status === 'rejected' ? '❌ 已拒绝' : '⏳ 待审核'}
+                    </div>
+                </div>
+                
+                ${status === 'approved' && sub.nickname ? `
+                <div class="info-row">
+                    <div class="info-label">主播昵称</div>
+                    <div class="info-value">${sub.nickname}</div>
+                </div>
+                ` : ''}
+                
+                ${status === 'rejected' && sub.rejectionReason ? `
+                <div class="info-row">
+                    <div class="info-label">拒绝理由</div>
+                    <div class="info-value">${sub.rejectionReason}</div>
+                </div>
+                ` : ''}
+                
+                <div class="action-section">
+                    <h3 style="margin-bottom: 1rem;">审核操作</h3>
+                    
+                    <!-- Approve Section -->
+                    <div id="approveSection" style="margin-bottom: 2rem; padding: 1.5rem; background: var(--bg-primary); border-radius: 15px;">
+                        <h4 style="color: #4caf50; margin-bottom: 1rem;">✅ 通过申请</h4>
+                        <div class="form-group">
+                            <label>主播昵称（中文）*</label>
+                            <input type="text" id="nicknameZh" class="form-input" placeholder="例如：甜心小兔" value="${sub.nickname || ''}">
+                        </div>
+                        <div class="form-group">
+                            <label>主播昵称（英文）*</label>
+                            <input type="text" id="nicknameEn" class="form-input" placeholder="例如：Sweet Bunny" value="${sub.nicknameEn || ''}">
+                        </div>
+                        <div class="form-group">
+                            <label>直播链接</label>
+                            <input type="text" id="reviewStreamUrl" class="form-input" placeholder="https://..." value="${sub.streamUrl || ''}">
+                        </div>
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="addToLeaderboard" ${sub.inLeaderboard ? 'checked' : ''}>
+                            <label style="margin: 0;">同时添加到排行榜</label>
+                        </div>
+                        <button class="btn btn-success" onclick="approveApplication()" style="margin-top: 1rem;">确认通过</button>
+                    </div>
+                    
+                    <!-- Reject Section -->
+                    <div id="rejectSection" style="padding: 1.5rem; background: var(--bg-primary); border-radius: 15px;">
+                        <h4 style="color: #f44336; margin-bottom: 1rem;">❌ 拒绝申请</h4>
+                        <div class="form-group">
+                            <label>拒绝理由 *</label>
+                            <textarea id="rejectionReason" class="form-input" placeholder="请填写拒绝理由...">${sub.rejectionReason || ''}</textarea>
+                        </div>
+                        <button class="btn btn-danger" onclick="rejectApplication()">确认拒绝</button>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('reviewModal').classList.add('show');
+        }
+
+        async function approveApplication() {
+            const nicknameZh = document.getElementById('nicknameZh').value.trim();
+            const nicknameEn = document.getElementById('nicknameEn').value.trim();
+            const streamUrl = document.getElementById('reviewStreamUrl').value.trim();
+            const addToLeaderboard = document.getElementById('addToLeaderboard').checked;
+            
+            if (!nicknameZh || !nicknameEn) {
+                alert('请填写主播昵称（中英文）');
+                return;
             }
+            
+            const updates = {
+                status: 'approved',
+                nickname: nicknameZh,
+                nicknameEn: nicknameEn,
+                streamUrl: streamUrl,
+                inLeaderboard: addToLeaderboard,
+                approvedAt: new Date().toISOString(),
+                approvedBy: localStorage.getItem('currentUser')
+            };
+            
+            try {
+                await database.ref('submissions/' + currentReviewId).update(updates);
+                
+                // If adding to leaderboard
+                if (addToLeaderboard) {
+                    const submissionSnapshot = await database.ref('submissions/' + currentReviewId).once('value');
+                    const submission = submissionSnapshot.val();
+                    
+                    const leaderboardData = {
+                        nameZh: nicknameZh,
+                        nameEn: nicknameEn,
+                        streamUrl: streamUrl,
+                        income: 0,
+                        hours: 0,
+                        fansGrowth: 0,
+                        badgeZh: '新人主播',
+                        badgeEn: 'Newcomer',
+                        originalName: submission.name,
+                        phone: submission.phone,
+                        addedAt: new Date().toISOString(),
+                        submissionId: currentReviewId
+                    };
+                    
+                    await database.ref('leaderboard').push(leaderboardData);
+                }
+                
+                alert('审核通过！');
+                closeReviewModal();
+                loadSubmissions();
+            } catch (error) {
+                alert('操作失败：' + error.message);
+            }
+        }
+
+        async function rejectApplication() {
+            const reason = document.getElementById('rejectionReason').value.trim();
+            
+            if (!reason) {
+                alert('请填写拒绝理由');
+                return;
+            }
+            
+            const updates = {
+                status: 'rejected',
+                rejectionReason: reason,
+                rejectedAt: new Date().toISOString(),
+                rejectedBy: localStorage.getItem('currentUser')
+            };
+            
+            try {
+                await database.ref('submissions/' + currentReviewId).update(updates);
+                alert('已拒绝申请');
+                closeReviewModal();
+                loadSubmissions();
+            } catch (error) {
+                alert('操作失败：' + error.message);
+            }
+        }
+
+        function closeReviewModal() {
+            document.getElementById('reviewModal').classList.remove('show');
+            currentReviewId = null;
+        }
+
+        async function deleteSubmission(key) {
+            if (!confirm('确定删除这条申请吗？此操作不可恢复！')) return;
+            await database.ref('submissions/' + key).remove();
+            loadSubmissions();
         }
 
         async function loadLeaderboard() {
@@ -608,9 +995,17 @@
             }
             const arr = Object.entries(data).map(([k, v]) => ({...v, key: k}));
             arr.sort((a, b) => (b.income || 0) - (a.income || 0));
+            
             let html = '';
             arr.forEach((s, i) => {
-                html += `<div style="padding:1rem;background:var(--bg-secondary);margin-bottom:1rem;border-radius:10px;"><strong>${i+1}. ${s.nameZh||'-'} / ${s.nameEn||'-'}</strong> - ¥${(s.income||0).toLocaleString()}<div style="margin-top:0.5rem;"><button class="btn btn-small" onclick="editStreamer('${s.key}')">编辑</button><button class="btn btn-small btn-secondary" onclick="deleteStreamer('${s.key}')">删除</button></div></div>`;
+                html += `<div style="padding:1rem;background:var(--bg-secondary);margin-bottom:1rem;border-radius:10px;">
+                    <strong>${i+1}. ${s.nameZh||'-'} / ${s.nameEn||'-'}</strong> - ¥${(s.income||0).toLocaleString()}
+                    ${s.streamUrl ? `<br><small>直播链接: <a href="${s.streamUrl}" target="_blank">${s.streamUrl}</a></small>` : ''}
+                    <div style="margin-top:0.5rem;">
+                        <button class="btn btn-small" onclick="editStreamer('${s.key}')">编辑</button>
+                        <button class="btn btn-small btn-secondary" onclick="deleteStreamer('${s.key}')">删除</button>
+                    </div>
+                </div>`;
             });
             listDiv.innerHTML = html;
         }
@@ -620,6 +1015,7 @@
             const streamer = {
                 nameZh: document.getElementById('streamerNameZh').value.trim(),
                 nameEn: document.getElementById('streamerNameEn').value.trim(),
+                streamUrl: document.getElementById('streamUrl').value.trim(),
                 income: parseInt(document.getElementById('income').value) || 0,
                 hours: parseInt(document.getElementById('hours').value) || 0,
                 fansGrowth: parseInt(document.getElementById('fansGrowth').value) || 0,
@@ -631,12 +1027,12 @@
                 return;
             }
             if (editId) {
-                await database.ref('leaderboard/' + editId).set(streamer);
+                await database.ref('leaderboard/' + editId).update(streamer);
             } else {
                 await database.ref('leaderboard').push(streamer);
             }
             document.getElementById('editId').value = '';
-            ['streamerNameZh', 'streamerNameEn', 'income', 'hours', 'fansGrowth', 'badgeZh', 'badgeEn'].forEach(id => {
+            ['streamerNameZh', 'streamerNameEn', 'streamUrl', 'income', 'hours', 'fansGrowth', 'badgeZh', 'badgeEn'].forEach(id => {
                 document.getElementById(id).value = '';
             });
             loadLeaderboard();
@@ -649,6 +1045,7 @@
             document.getElementById('editId').value = key;
             document.getElementById('streamerNameZh').value = s.nameZh || '';
             document.getElementById('streamerNameEn').value = s.nameEn || '';
+            document.getElementById('streamUrl').value = s.streamUrl || '';
             document.getElementById('income').value = s.income || '';
             document.getElementById('hours').value = s.hours || '';
             document.getElementById('fansGrowth').value = s.fansGrowth || '';
@@ -658,10 +1055,9 @@
         }
 
         async function deleteStreamer(key) {
-            if (confirm('确定删除？')) {
-                await database.ref('leaderboard/' + key).remove();
-                loadLeaderboard();
-            }
+            if (!confirm('确定删除？')) return;
+            await database.ref('leaderboard/' + key).remove();
+            loadLeaderboard();
         }
 
         function checkPasswordStrength() {
@@ -807,17 +1203,16 @@
         }
 
         async function deleteAdmin(key) {
-            if (confirm('确定删除？')) {
-                await database.ref('admins/' + key).remove();
-                loadAdmins();
-            }
+            if (!confirm('确定删除？')) return;
+            await database.ref('admins/' + key).remove();
+            loadAdmins();
         }
 
         document.addEventListener('DOMContentLoaded', async () => {
             await initDefaultAdmin();
             checkAuth();
             ['loginUsername', 'loginPassword'].forEach(id => {
-                document.getElementById(id).addEventListener('keypress', (e) => {
+                document.getElementById(id)?.addEventListener('keypress', (e) => {
                     if (e.key === 'Enter') login();
                 });
             });
