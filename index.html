@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ℋ Agency 希望公会 | 主播招募</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Noto+Sans+SC:wght@300;400;500;600&family=Cormorant+Garamond:wght@300;400;600&display=swap" rel="stylesheet">
+    
+    <!-- Main CSS -->
+    <link rel="stylesheet" href="css/main.css">
+</head>
+<body data-theme="light">
+    <!-- Notification Container -->
+    <div id="notification" class="notification">
+        <button class="notification-close" onclick="utils.hideNotification()">×</button>
+        <div class="notification-title" id="notificationTitle"></div>
+        <div class="notification-message" id="notificationMessage"></div>
+    </div>
+
+    <!-- Header -->
+    <header class="header">
+        <nav class="nav-container">
+            <div class="logo">ℋ Agency</div>
+            <div class="nav-links">
+                <a href="#home" class="nav-link">首页</a>
+                <a href="#about" class="nav-link">关于我们</a>
+                <a href="#benefits" class="nav-link">福利待遇</a>
+                <a href="#leaderboard" class="nav-link">获奖榜单</a>
+                <a href="#apply" class="nav-link">立即报名</a>
+            </div>
+            <div class="controls">
+                <button class="btn-control" id="langToggle">EN</button>
+                <button class="btn-control" id="themeToggle">🌙</button>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="particle" style="width: 20px; height: 20px; top: 20%; left: 10%; animation-delay: 0s;"></div>
+        <div class="particle" style="width: 15px; height: 15px; top: 40%; left: 80%; animation-delay: 2s;"></div>
+        <div class="particle" style="width: 25px; height: 25px; top: 60%; left: 15%; animation-delay: 4s;"></div>
+        <div class="particle" style="width: 18px; height: 18px; top: 30%; left: 70%; animation-delay: 1s;"></div>
+        <div class="particle" style="width: 22px; height: 22px; top: 70%; left: 60%; animation-delay: 3s;"></div>
+        <div class="particle" style="width: 12px; height: 12px; top: 50%; left: 30%; animation-delay: 5s;"></div>
+        
+        <div class="hero-content">
+            <div class="hero-badge">✨ 2026 招募季启动</div>
+            <h1>
+                加入<span class="gradient-text">希望公会</span><br>
+                成为闪耀主播
+            </h1>
+            <p>专业培训 · 流量扶持 · 高额提成 · 业绩奖励<br>让你的才华在这里绽放光芒</p>
+            <div class="hero-cta">
+                <button class="btn-primary" onclick="utils.scrollToElement('#apply')">
+                    立即报名
+                </button>
+                <button class="btn-secondary" onclick="utils.scrollToElement('#about')">
+                    了解更多
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="section scroll-reveal" id="about">
+        <div class="section-header">
+            <h2 class="section-title">为什么选择希望公会</h2>
+            <p class="section-subtitle">专业团队 · 完善体系 · 成长保障</p>
+        </div>
+        <div class="about-grid">
+            <div class="about-card">
+                <div class="card-icon">🎭</div>
+                <h3 class="card-title" data-zh="专业平台" data-en="Professional Platform">专业平台</h3>
+                <p class="card-text" data-zh="我们是娱乐直播领域的专业公会，拥有丰富的运营经验和成熟的主播培养体系，帮助每位主播快速成长。" data-en="We are a professional agency in entertainment streaming with rich operational experience and mature streamer development system.">我们是娱乐直播领域的专业公会，拥有丰富的运营经验和成熟的主播培养体系，帮助每位主播快速成长。</p>
+            </div>
+            <div class="about-card">
+                <div class="card-icon">🎯</div>
+                <h3 class="card-title" data-zh="精准定位" data-en="Precise Positioning">精准定位</h3>
+                <p class="card-text" data-zh="根据每位主播的特点和优势，量身定制发展方向，让你在最适合的领域发光发热，实现价值最大化。" data-en="Customize development direction based on each streamer's characteristics and strengths.">根据每位主播的特点和优势，量身定制发展方向，让你在最适合的领域发光发热，实现价值最大化。</p>
+            </div>
+            <div class="about-card">
+                <div class="card-icon">🚀</div>
+                <h3 class="card-title" data-zh="流量扶持" data-en="Traffic Support">流量扶持</h3>
+                <p class="card-text" data-zh="公会提供强大的流量支持和推广资源，帮助新人主播快速积累粉丝，老主播持续增长人气。" data-en="Powerful traffic support and promotion resources to help streamers grow.">公会提供强大的流量支持和推广资源，帮助新人主播快速积累粉丝，老主播持续增长人气。</p>
+            </div>
+            <div class="about-card">
+                <div class="card-icon">💎</div>
+                <h3 class="card-title" data-zh="资源整合" data-en="Resource Integration">资源整合</h3>
+                <p class="card-text" data-zh="与多个直播平台深度合作，为主播提供更多曝光机会和商业合作资源，拓展职业发展道路。" data-en="Deep cooperation with multiple streaming platforms for more opportunities.">与多个直播平台深度合作，为主播提供更多曝光机会和商业合作资源，拓展职业发展道路。</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Benefits Section -->
+    <section class="section scroll-reveal" id="benefits">
+        <div class="section-header">
+            <h2 class="section-title">丰厚福利待遇</h2>
+            <p class="section-subtitle">我们为主播提供全方位的支持与保障</p>
+        </div>
+        <div class="benefits-grid">
+            <div class="benefit-card">
+                <div class="benefit-icon">💰</div>
+                <h3 class="benefit-title" data-zh="保底薪资" data-en="Base Salary">保底薪资</h3>
+                <p class="benefit-desc" data-zh="提供具有竞争力的底薪保障，让你没有后顾之忧" data-en="Competitive base salary guarantee">提供具有竞争力的底薪保障，让你没有后顾之忧</p>
+            </div>
+            <div class="benefit-card">
+                <div class="benefit-icon">📈</div>
+                <h3 class="benefit-title" data-zh="高额提成" data-en="High Commission">高额提成</h3>
+                <p class="benefit-desc" data-zh="业内领先的分成比例，收入上不封顶" data-en="Industry-leading commission rate">业内领先的分成比例，收入上不封顶</p>
+            </div>
+            <div class="benefit-card">
+                <div class="benefit-icon">🎓</div>
+                <h3 class="benefit-title" data-zh="专业培训" data-en="Professional Training">专业培训</h3>
+                <p class="benefit-desc" data-zh="系统化培训课程，全方位指导" data-en="Systematic training courses">系统化培训课程，全方位指导</p>
+            </div>
+            <div class="benefit-card">
+                <div class="benefit-icon">🔥</div>
+                <h3 class="benefit-title" data-zh="流量扶持" data-en="Traffic Support">流量扶持</h3>
+                <p class="benefit-desc" data-zh="公会提供流量倾斜和推广资源" data-en="Traffic allocation and promotion">公会提供流量倾斜和推广资源</p>
+            </div>
+            <div class="benefit-card">
+                <div class="benefit-icon">🏆</div>
+                <h3 class="benefit-title" data-zh="业绩奖励" data-en="Performance Rewards">业绩奖励</h3>
+                <p class="benefit-desc" data-zh="多层级业绩奖励机制" data-en="Multi-tier reward system">多层级业绩奖励机制</p>
+            </div>
+            <div class="benefit-card">
+                <div class="benefit-icon">🎁</div>
+                <h3 class="benefit-title" data-zh="节日福利" data-en="Holiday Benefits">节日福利</h3>
+                <p class="benefit-desc" data-zh="各类节日礼品、生日祝福、团建活动" data-en="Holiday gifts and team building">各类节日礼品、生日祝福、团建活动</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Leaderboard Section -->
+    <section class="section scroll-reveal" id="leaderboard">
+        <div class="section-header">
+            <h2 class="section-title">本月明星主播</h2>
+            <p class="section-subtitle">优秀主播榜单 · 见证你的成长</p>
+        </div>
+        <div class="leaderboard" id="leaderboardContainer">
+            <!-- Leaderboard will be loaded from Firebase -->
+        </div>
+    </section>
+
+    <!-- Application Form -->
+    <section class="section scroll-reveal" id="apply">
+        <div class="section-header">
+            <h2 class="section-title">立即加入我们</h2>
+            <p class="section-subtitle">填写报名表，开启你的主播之路</p>
+        </div>
+        <div class="form-container">
+            <form id="applicationForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label" data-zh="姓名 *" data-en="Name *">姓名 *</label>
+                        <input type="text" class="form-input" id="applicantName" required data-placeholder-zh="请输入你的姓名" data-placeholder-en="Enter your name" placeholder="请输入你的姓名">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" data-zh="年龄 *" data-en="Age *">年龄 *</label>
+                        <input type="number" class="form-input" id="applicantAge" required data-placeholder-zh="请输入你的年龄" data-placeholder-en="Enter your age" placeholder="请输入你的年龄">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label" data-zh="联系电话 *" data-en="Phone *">联系电话 *</label>
+                        <input type="tel" class="form-input" id="applicantPhone" required data-placeholder-zh="请输入你的手机号" data-placeholder-en="Enter your phone" placeholder="请输入你的手机号">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" data-zh="微信号" data-en="WeChat ID">微信号</label>
+                        <input type="text" class="form-input" id="applicantWechat" data-placeholder-zh="请输入你的微信号" data-placeholder-en="Enter your WeChat ID" placeholder="请输入你的微信号">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" data-zh="邮箱" data-en="Email">邮箱</label>
+                    <input type="email" class="form-input" id="applicantEmail" data-placeholder-zh="请输入你的邮箱" data-placeholder-en="Enter your email" placeholder="请输入你的邮箱">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" data-zh="直播经验 *" data-en="Experience *">直播经验 *</label>
+                    <select class="form-select" required id="experienceSelect">
+                        <option value="" data-zh="请选择" data-en="Please select">请选择</option>
+                        <option value="none" data-zh="无经验" data-en="No experience">无经验</option>
+                        <option value="beginner" data-zh="1-3个月" data-en="1-3 months">1-3个月</option>
+                        <option value="intermediate" data-zh="3-12个月" data-en="3-12 months">3-12个月</option>
+                        <option value="experienced" data-zh="1年以上" data-en="1+ years">1年以上</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" data-zh="擅长领域 *" data-en="Specialization *">擅长领域 *</label>
+                    <select class="form-select" required id="specializationSelect">
+                        <option value="" data-zh="请选择" data-en="Please select">请选择</option>
+                        <option value="singing" data-zh="唱歌" data-en="Singing">唱歌</option>
+                        <option value="dancing" data-zh="跳舞" data-en="Dancing">跳舞</option>
+                        <option value="chatting" data-zh="聊天互动" data-en="Chatting">聊天互动</option>
+                        <option value="talent" data-zh="才艺表演" data-en="Talent Show">才艺表演</option>
+                        <option value="other" data-zh="其他" data-en="Other">其他</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" data-zh="个人简介 *" data-en="About Yourself *">个人简介 *</label>
+                    <textarea class="form-textarea" id="applicantIntro" required data-placeholder-zh="请简单介绍一下你自己..." data-placeholder-en="Tell us about yourself..." placeholder="请简单介绍一下你自己..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" data-zh="社交媒体账号" data-en="Social Media">社交媒体账号</label>
+                    <input type="text" class="form-input" id="applicantSocial" data-placeholder-zh="请输入你的抖音、快手等账号" data-placeholder-en="Your TikTok, etc." placeholder="请输入你的抖音、快手等账号">
+                </div>
+                <button type="submit" class="form-submit" data-zh="提交申请" data-en="Submit Application">提交申请</button>
+            </form>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="logo" style="font-size: 2.5rem; margin-bottom: 1rem;">ℋ Agency</div>
+            <p style="color: var(--text-secondary); margin-bottom: 1rem;" data-zh="希望公会 | 让每个主播都闪闪发光" data-en="ℋ Agency | Making Every Streamer Shine">希望公会 | 让每个主播都闪闪发光</p>
+            <div class="social-links">
+                <a href="https://www.instagram.com/h_agency21/" target="_blank" class="social-link">📷</a>
+                <a href="#" class="social-link">💬</a>
+                <a href="#" class="social-link">📧</a>
+            </div>
+            <div class="copyright" data-zh="© 2026 ℋ Agency 希望公会. All rights reserved." data-en="© 2026 ℋ Agency. All rights reserved.">
+                © 2026 ℋ Agency 希望公会. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript - Load in correct order -->
+    <!-- 1. External SDKs first -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    
+    <!-- 2. Then our modules in order -->
+    <script src="js/utils.js"></script>
+    <script src="js/config.js"></script>
+    <script src="js/translations.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>

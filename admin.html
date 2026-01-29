@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ℋ Agency 管理后台</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Noto+Sans+SC:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- Admin CSS -->
+    <link rel="stylesheet" href="css/admin.css">
+</head>
+<body data-theme="light">
+    <!-- Login Page -->
+    <div id="loginPage" class="login-container">
+        <div class="login-box">
+            <div class="login-logo">ℋ Agency</div>
+            <div class="login-title">管理后台登录</div>
+            <div class="warning-box">
+                <strong>🔑 默认账号：</strong><br>
+                用户名: <code>admin</code><br>
+                密码: <code>admin123</code><br>
+                <small>首次登录后请立即修改密码！</small>
+            </div>
+            <div id="loginError" class="error-message"></div>
+            <div>
+                <div class="form-group">
+                    <label>用户名</label>
+                    <input type="text" id="loginUsername" placeholder="请输入用户名">
+                </div>
+                <div class="form-group">
+                    <label>密码</label>
+                    <input type="password" id="loginPassword" placeholder="请输入密码">
+                </div>
+                <button class="btn" onclick="login()">登录</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dashboard -->
+    <div id="dashboard" class="hidden">
+        <div class="header">
+            <div class="logo">ℋ Agency 管理后台</div>
+            <div style="display: flex; gap: 1rem; align-items: center;">
+                <span id="currentUser"></span>
+                <button class="btn btn-small btn-secondary" onclick="logout()">登出</button>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="tabs">
+                <button class="tab active" onclick="switchTab('submissions')">申请审核</button>
+                <button class="tab" onclick="switchTab('leaderboard')">排行榜管理</button>
+                <button class="tab" onclick="switchTab('password')">修改密码</button>
+                <button class="tab" onclick="switchTab('admins')">管理员设置</button>
+            </div>
+
+            <!-- Submissions Tab -->
+            <div id="submissions" class="tab-content active">
+                <div class="card">
+                    <h3>申请审核列表</h3>
+                    <div id="submissionsTable">加载中...</div>
+                </div>
+            </div>
+
+            <!-- Leaderboard Tab -->
+            <div id="leaderboard" class="tab-content">
+                <div class="card">
+                    <h3>添加/编辑主播</h3>
+                    <input type="hidden" id="editId">
+                    <div class="form-group">
+                        <label>主播昵称（中文）*</label>
+                        <input type="text" id="streamerNameZh">
+                    </div>
+                    <div class="form-group">
+                        <label>主播昵称（英文）*</label>
+                        <input type="text" id="streamerNameEn">
+                    </div>
+                    <div class="form-group">
+                        <label>直播链接</label>
+                        <input type="text" id="streamUrl" placeholder="https://...">
+                    </div>
+                    <div class="form-group">
+                        <label>本月收入 (¥)*</label>
+                        <input type="number" id="income">
+                    </div>
+                    <div class="form-group">
+                        <label>直播时长（小时）*</label>
+                        <input type="number" id="hours">
+                    </div>
+                    <div class="form-group">
+                        <label>粉丝增长*</label>
+                        <input type="number" id="fansGrowth">
+                    </div>
+                    <div class="form-group">
+                        <label>徽章（中文）*</label>
+                        <input type="text" id="badgeZh" placeholder="例如：月度冠军">
+                    </div>
+                    <div class="form-group">
+                        <label>徽章（英文）*</label>
+                        <input type="text" id="badgeEn" placeholder="例如：Monthly Champion">
+                    </div>
+                    <button class="btn" onclick="saveStreamer()">保存主播</button>
+                </div>
+
+                <div class="card">
+                    <h3>当前排行榜</h3>
+                    <div id="leaderboardList">加载中...</div>
+                </div>
+            </div>
+
+            <!-- Change Password Tab -->
+            <div id="password" class="tab-content">
+                <div class="card">
+                    <h3>修改密码</h3>
+                    <div class="info-box">
+                        <strong>ℹ️ 安全提示：</strong><br>
+                        • 密码长度至少6个字符<br>
+                        • 建议使用字母、数字和特殊字符的组合<br>
+                        • 修改密码后需要重新登录
+                    </div>
+                    <div id="passwordError" class="error-message"></div>
+                    <div id="passwordSuccess" class="success-message"></div>
+                    
+                    <div class="form-group">
+                        <label>当前密码 *</label>
+                        <input type="password" id="currentPassword" placeholder="请输入当前密码">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>新密码 *</label>
+                        <input type="password" id="newPassword" placeholder="请输入新密码（至少6个字符）" oninput="checkPasswordStrength()">
+                        <div class="password-strength">
+                            <div id="strengthBar" class="password-strength-bar"></div>
+                        </div>
+                        <div id="strengthText" class="password-hint"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>确认新密码 *</label>
+                        <input type="password" id="confirmPassword" placeholder="请再次输入新密码">
+                    </div>
+                    
+                    <button class="btn" onclick="changePassword()">确认修改</button>
+                </div>
+            </div>
+
+            <!-- Admins Tab -->
+            <div id="admins" class="tab-content">
+                <div class="card">
+                    <h3>添加新管理员</h3>
+                    <div class="form-group">
+                        <label>用户名*</label>
+                        <input type="text" id="newAdminUsername" placeholder="至少4个字符">
+                    </div>
+                    <div class="form-group">
+                        <label>密码*</label>
+                        <input type="password" id="newAdminPassword" placeholder="至少6个字符">
+                    </div>
+                    <div class="form-group">
+                        <label>姓名</label>
+                        <input type="text" id="newAdminName">
+                    </div>
+                    <button class="btn" onclick="addAdmin()">添加管理员</button>
+                </div>
+
+                <div class="card">
+                    <h3>管理员列表</h3>
+                    <div id="adminsTable">加载中...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Review Modal -->
+    <div id="reviewModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">审核申请</h2>
+                <button class="close-btn" onclick="closeReviewModal()">&times;</button>
+            </div>
+            
+            <div id="reviewContent">
+                <!-- Content will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript - Load in correct order -->
+    <!-- 1. External SDKs first -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+    
+    <!-- 2. Then our modules in order -->
+    <script src="js/utils.js"></script>
+    <script src="js/config.js"></script>
+    <script src="js/admin.js"></script>
+</body>
+</html>
